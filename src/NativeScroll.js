@@ -1,19 +1,15 @@
 import axios from 'axios'
-export default class Scroll{
-    constructor(props){
-        super(props)
-        this.state = {
-            fetching:false, //加载状态锁
-            num:1, //第几页
-            list:[]
-        }
-        this.handlescroll = this.handlescroll.bind(this)
-    }
-    componentDidMount(){
-        this.handlefetch()
-        window.addEventListener('scroll',this.handlescroll,false)
-    }
+export default class NativeScroll{
+    constructor(){
+        this._fetching = false, //加载状态锁
+        this._list = []
+        this._num = 1
 
+       
+        this.handlescroll = this.handlescroll.bind(this)
+        this.handlefetch = this.handlefetch.bind(this)
+        window.addEventListener('load',this.handlefetch,false)
+    }
     async handlescroll(){
         //文档高度
         let doumentHeight = document.body.scrollHeight
@@ -37,8 +33,9 @@ export default class Scroll{
 
     //ajax请求数据
     async handlefetch(){
+        console.log('wawa')
         let that = this
-        let { num ,fetching} = that.state
+        let { num ,fetching } = that
         if (fetching) {
             return
         }
@@ -57,21 +54,19 @@ export default class Scroll{
         axios.post('https://sec-m.ctrip.com/restapi/soa2/13561/search',
         {contentType:"json",filtered:filtered}).then(
             (res) => {
-                that.setState({
-                    num:that.num+1
-                })
+                this._num++
                 let products = res.data.products
                 let proKeyQuery = products.map(item => {return {id:item.id,buType: "GT", deptCity: 0}})
                 let param = {
                     proKeyQuery,
-                    //imageOption:{width: 480, height: 320},
                     imageOption:{width: 600, height: 320},
                     contentType:"json",
                     channel: "h5"
                 }
                 axios.post('https://sec-m.ctrip.com/restapi/soa2/11899/proInfo4static',param).then((resp)=>{
-                    let {list:oldlist} = this.state
-                    that.setState({list:oldlist.concat(resp.data.items)})
+                    //return resp
+                    //let {list:oldlist} = that
+                    that._list = that._list.concat(resp.data.items)
                 })
             }
 
@@ -83,24 +78,5 @@ export default class Scroll{
         
     }
 
-    render(){
-        const { list } = this.state
-        return(
-            <div
-                style={{
-                background: '#fff',
-                padding: 24,
-                margin: 0,
-                minHeight: 680,
-                }}
-            >
-               {list.map(item => (
-                   <ul className='item'>
-                       <div className = "photo"><img src={item.image} /></div>
-	                    <div class="intro">{ item.proName}</div>
-                    </ul>
-               ))}
-            </div>
-        )
-    }
 }
+

@@ -99,8 +99,10 @@ export default class Scroll extends React.Component{
             >
                {list.map(item => (
                    <ul className='item'>
-                       <div className = "photo"><img src={item.image} /></div>
-	                    <div class="intro">{ item.proName}</div>
+                       <li>
+                            <img className = "photo" src={item.image} />
+	                        <span className="intro">{ item.proName}</span>
+                        </li >
                     </ul>
                ))}
             </div>

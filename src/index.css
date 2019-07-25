@@ -1,12 +1,16 @@
 .photo{
     float:left;
     width:60%;
-    padding-bottom: 20px
+    padding-bottom: 20px;
 }
+
 .intro{
     float:right;
     width:40%;
 }
 .item{
     padding: 10px
+}
+ul{
+    list-style: none
 }
